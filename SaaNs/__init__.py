@@ -1,5 +1,5 @@
 import logging
-
+from .schema import RequestSchema
 import azure.functions as func
 
 
@@ -10,8 +10,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not name:
         try:
             req_body = req.get_json()
-        except ValueError:
-            pass
+            data = RequestSchema(**req_body)
+            logging.info('hello')
+        except ValueError as e:
+            logging.error('Value error')
+            logging.error(e)
         else:
             name = req_body.get('name')
 
