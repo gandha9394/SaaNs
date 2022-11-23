@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Union
 from enum import Enum
 # {
 # start_time:""
@@ -40,5 +40,9 @@ class RequestSchema(BaseModel):
     end_time: str
     fips: FIPObjectSchema
     
-    
-
+class MetricEventTypes(BaseModel):
+    pass
+class MetricType(BaseModel):
+    metric: MetricEventTypes
+    timestamp: int
+    value: Union[int, str, float]

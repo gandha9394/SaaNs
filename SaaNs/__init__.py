@@ -1,5 +1,6 @@
 import logging
 from .schema import RequestSchema
+from .metrics import account_discovery_metric
 import azure.functions as func
 
 
@@ -10,8 +11,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not name:
         try:
             req_body = req.get_json()
-            data = RequestSchema(**req_body)
-            logging.info('hello')
+            RequestSchema(**req_body)
+            account_discovery_metric(req_body)
         except ValueError as e:
             logging.error('Value error')
             logging.error(e)
