@@ -10,18 +10,7 @@
         "get",
         "post"
       ],
-      "route": "/push"
-    },
-    {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
-      "direction": "in",
-      "name": "report",
-      "methods": [
-        "get",
-        "post"
-      ],
-      "route": "/report"
+      "route": "/SaaNs"
     },
     {
       "type": "http",
