@@ -5,7 +5,7 @@
       "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
-      "name": "req",
+      "name": "push",
       "methods": [
         "get",
         "post"
@@ -16,12 +16,12 @@
       "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
-      "name": "req",
+      "name": "report",
       "methods": [
         "get",
         "post"
       ],
-      "route": "/push"
+      "route": "/report"
     },
     {
       "type": "http",
