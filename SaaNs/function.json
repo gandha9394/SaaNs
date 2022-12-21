@@ -9,7 +9,19 @@
       "methods": [
         "get",
         "post"
-      ]
+      ],
+      "route": "/push"
+    },
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "route": "/push"
     },
     {
       "type": "http",
