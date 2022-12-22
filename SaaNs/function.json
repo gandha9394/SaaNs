@@ -5,12 +5,11 @@
       "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
-      "name": "push",
+      "name": "req",
       "methods": [
         "get",
         "post"
-      ],
-      "route": "/SaaNs"
+      ]
     },
     {
       "type": "http",
