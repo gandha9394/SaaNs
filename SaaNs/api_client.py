@@ -4,6 +4,7 @@ import json
 from requests import Response
 from .schema import PushRequestBody, ReportRequestBody
 import httpx
+from httpx import Response
 import asyncio
 
 
@@ -34,24 +35,18 @@ def push(data: PushRequestBody) -> Response:
         logging.error("Failed to push metric!")
         logging.exception(e)
 
-async def call_url(session, url):
+async def fetch(url, session = None) -> Response: 
+    if not session:
+        session = httpx.AsyncClient()
     response = await session.request(method='GET',url=VM_SELECT_ENDPOINT+url)
     return response
 
-async def fetch(data) -> str:
+async def fetch_bulk(data) -> str:
     # TODO add exponential backoff
     try:
-        loop = asyncio.get_event_loop()
-        logging.info("--------------------")
-        logging.info(data)
         async with httpx.AsyncClient() as session:  #use httpx
-             responses = await asyncio.gather(*[call_url(session, x) for x in data])
+             responses = await asyncio.gather(*[fetch(x, session) for x in data])
         session.aclose()
-        
-        logging.info("fetched metric")
-        for response in responses:
-            logging.info(response.content)
-            logging.info(response.status_code)
         return responses
     except Exception as e:
         logging.error("Failed to push metric!")

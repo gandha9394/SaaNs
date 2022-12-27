@@ -13,7 +13,7 @@ async def get_report_async(report_query):
     return json.dumps(res)
 
 def format_error(code, message):
-    return json.dumps({"error":True,"code":code,"message":message})
+    return json.dumps({"success":False,"code":code,"message":message})
 
 def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -29,7 +29,7 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 return azure.functions.HttpResponse(format_error("validation_error",str(e)), headers={'content-type':'application/json'})
             try:
                 account_discovery_metric(body)
-                return azure.functions.HttpResponse('Successfully pushed metric', status_code = 200)
+                return azure.functions.HttpResponse('{"success":true,"message":"Successfully pushed metric"}',headers={'content-type':'application/json'}, status_code = 200)
             except RequestException as e:
                 return azure.functions.HttpResponse(format_error("api_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
         if report:

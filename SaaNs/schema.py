@@ -38,6 +38,8 @@ class ReportRequestBody(BaseModel):
     events: Optional[List[Event]] = Field(
         None, example=['FIP_ACCOUNT_DISCOVERY', 'FIP_LINK_ACCOUNT']
     )
+    class Config:  
+        use_enum_values = True  
 
 
 class Event1(Enum):
