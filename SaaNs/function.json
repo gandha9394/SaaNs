@@ -9,7 +9,8 @@
       "methods": [
         "get",
         "post"
-      ]
+      ],
+      "route": "SaaNs/{type:alpha}"
     },
     {
       "type": "http",

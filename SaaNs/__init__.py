@@ -17,10 +17,10 @@ def format_error(code, message):
 
 def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-    report = req.params.get('report')
-    logging.info(req.url)
+    api_type = req.route_params.get('type')
+    logging.info(req.route_params.get('type'))
     if req.method == 'POST':
-        if not report:
+        if api_type == 'push':
             try:
                 req_body = req.get_json()
                 body = PushRequestBody(**req_body)
@@ -32,7 +32,7 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 return azure.functions.HttpResponse('{"success":true,"message":"Successfully pushed metric"}',headers={'content-type':'application/json'}, status_code = 200)
             except RequestException as e:
                 return azure.functions.HttpResponse(format_error("api_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
-        if report:
+        if api_type == 'report':
             try:
                 req_body = req.get_json()
                 report_query = ReportRequestBody(**req_body)
