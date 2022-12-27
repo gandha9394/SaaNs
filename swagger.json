@@ -1,0 +1,325 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SaaNs Health service",
+    "description": "",
+    "contact": {},
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://saans.sahamati.org.in",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/api/push": {
+      "post": {
+        "tags": [
+          "Push metrics"
+        ],
+        "summary": "Push health metrics",
+        "operationId": "PushHealthMetrics",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "encoding": {},
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/pushRequestBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Reports of health metrics",
+        "operationId": "Reports",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "encoding": {},
+              "schema": {
+                "required": [
+                  "start_time",
+                  "end_time",
+                  "fips"
+                ],
+                "type": "object",
+                "$ref": "#/components/schemas/reportRequestBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/reportResponseBody"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "pushRequestBody": {
+        "type": "object",
+        "properties": {
+          "start_time": {
+            "type": "string",
+            "example": "2022-01-20T13:04:00.000Z"
+          },
+          "end_time": {
+            "type": "string",
+            "example": "2022-01-20T13:14:00.000Z"
+          },
+          "fips": {
+            "type": "object",
+            "properties": {
+              "icici": {
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": [
+                    "FIP-1",
+                    "FIP-2"
+                  ]
+                },
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/fipObject",
+                  "icici| hdfc": null
+                }
+              },
+              "hdfc": {
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": [
+                    "FIP-1",
+                    "FIP-2"
+                  ]
+                },
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/fipObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "fipObject": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "FIP_DISCOVERY",
+              "FIP_LINK_ACCOUNT",
+              "AA_USER_APPROVE_CONSENT"
+            ]
+          },
+          "successCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "failureCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "notFoundCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_avg": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p90": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p95": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p50": {
+            "type": "integer",
+            "example": "100"
+          }
+        }
+      },
+      "reportRequestBody": {
+        "type": "object",
+        "properties": {
+          "start_time": {
+            "type": "string",
+            "example": "2022-01-20T13:04:00.000Z"
+          },
+          "end_time": {
+            "type": "string",
+            "example": "2022-01-20T13:14:00.000Z"
+          },
+          "fipsIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "FIP-ID1",
+              "FIP-ID2"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "FIP_DISCOVERY",
+              "FIP_ACCOUNT_LINKING"
+            ]
+          }
+        }
+      },
+      "reportResponseBody": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "$ref": "#/components/schemas/reportResponseFIPObject"
+            }
+          }
+        }
+      },
+      "reportResponseFIPObject": {
+        "type": "object",
+        "properties": {
+          "fipId": {
+            "type": "string",
+            "example": "FIP-ID1"
+          },
+          "event": {
+            "type": "string",
+            "enum": [
+              "FIP_DISCOVERY",
+              "FIP_LINK_ACCOUNT",
+              "AA_USER_APPROVE_CONSENT"
+            ]
+          },
+          "latency": {
+            "type": "integer",
+            "example": "100"
+          },
+          "successCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "failureCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "notFoundCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p90": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p95": {
+            "type": "integer",
+            "example": "100"
+          },
+          "latency_p50": {
+            "type": "integer",
+            "example": "100"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Push metrics",
+      "description": ""
+    }
+  ]
+}
