@@ -9,8 +9,6 @@ from .utils import verify_and_decode_credentials
 
 async def get_report_async(report_query):
     res = await get_report(report_query)
-    logging.info('-----------------------')
-    logging.info(json.dumps(res))
     return json.dumps(res)
 
 def format_error(code, message):
@@ -44,12 +42,18 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 return azure.functions.HttpResponse(format_error("api_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
         if api_type == 'report':
             try:
+                claim = verify_and_decode_credentials(auth, 'AA')
                 req_body = req.get_json()
+                fiuId = claim['azp']
                 report_query = ReportRequestBody(**req_body)
+                logging.info(f'{fiuId} pushed metrics for period : {report_query.duration} - {report_query.evaluate_at}')
                 report_response = asyncio.run(get_report_async(report_query))
                 return azure.functions.HttpResponse(report_response,headers={'content-type':'application/json'})
             except ValueError as e:
                 return azure.functions.HttpResponse(format_error("validation_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
+            except Exception as e:
+                logging.error(e)
+                return azure.functions.HttpResponse(format_error("auth_error","Invalid credentials"), headers={'content-type':'application/json'}, status_code=400)
     else:
         return azure.functions.HttpResponse(
             "Invalid operation. Please use POST method on /api/push APIs.",
