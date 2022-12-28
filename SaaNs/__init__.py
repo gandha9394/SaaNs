@@ -5,6 +5,7 @@ from .metrics import account_discovery_metric, get_report
 from requests import RequestException
 import azure.functions
 import asyncio
+from .utils import verify_and_decode_credentials
 
 async def get_report_async(report_query):
     res = await get_report(report_query)
@@ -16,17 +17,26 @@ def format_error(code, message):
     return json.dumps({"success":False,"code":code,"message":message})
 
 def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
     api_type = req.route_params.get('type')
     logging.info(req.route_params.get('type'))
+    logging.info(req.url)
     if req.method == 'POST':
         if api_type == 'push':
+            
             try:
+                auth = req.headers.get('x-api-key','')
+                logging.info(auth)
+                claim = verify_and_decode_credentials(auth, 'AA')
+                aaId= claim['azp']
                 req_body = req.get_json()
                 body = PushRequestBody(**req_body)
+                logging.info(f'{aaId} pushed metrics for period : {body.start_time} - {body.end_time}')
             except ValueError as e:
-                logging.error('Value error')
+                logging.error(e)
                 return azure.functions.HttpResponse(format_error("validation_error",str(e)), headers={'content-type':'application/json'})
+            except Exception as e:
+                logging.error(e)
+                return azure.functions.HttpResponse(format_error("auth_error","Invalid credentials"), headers={'content-type':'application/json'}, status_code=400)
             try:
                 account_discovery_metric(body)
                 return azure.functions.HttpResponse('{"success":true,"message":"Successfully pushed metric"}',headers={'content-type':'application/json'}, status_code = 200)
@@ -42,6 +52,6 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 return azure.functions.HttpResponse(format_error("validation_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
     else:
         return azure.functions.HttpResponse(
-            "Invalid operation. Please use POST method on /api/push or /api/push APIs.",
+            "Invalid operation. Please use POST method on /api/push APIs.",
             status_code=400
         )

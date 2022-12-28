@@ -69,6 +69,7 @@ async def get_metric_count(time,delta, fip):
         return total
 
 async def get_report(query: ReportRequestBody):
+    # TODO simplify this
     duration = query.duration
     evaluate_at = datetime.strptime(
         query.evaluate_at, "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -80,6 +81,7 @@ async def get_report(query: ReportRequestBody):
                 # "?query=avg_over_time(FIP_ACCOUNT_DISCOVERY.latencyP95_ms[12h])",
                 # "?query=avg_over_time(FIP_ACCOUNT_DISCOVERY.latency_ms[12h])",
             [
+                # TODO: Instead of avg fetch min and max
                 get_promql_query("avg_over_time",f"{e_names}.latencyP90_ms",evaluate_at,duration, query.fipIds),
                 get_promql_query('avg_over_time',f'{e_names}.latencyP95_ms',evaluate_at,duration,query.fipIds),
                 get_promql_query('avg_over_time',f'{e_names}.latencyP50_ms',evaluate_at,duration,query.fipIds),

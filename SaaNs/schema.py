@@ -30,6 +30,7 @@ class FipObject(BaseModel):
 
 
 class ReportRequestBody(BaseModel):
+    # TODO: Add validations
     duration: Optional[str] =  Field(None, example='12h30m')
     evaluate_at: Optional[str] = Field(None, example='2022-01-20T14:04:00.000Z')
     start_time: Optional[str] = Field(None, example='2022-01-20T13:04:00.000Z')
@@ -67,6 +68,7 @@ class ReportResponseFIPObject(BaseModel):
 
 
 class PushRequestBody(BaseModel):
+    # TODO: add validations
     start_time: Optional[str] = Field(None, example='2022-01-20T13:04:00.000Z')
     end_time: Optional[str] = Field(None, example='2022-01-20T13:14:00.000Z')
     events: Optional[List[FipObject]] = None
