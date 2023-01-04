@@ -29,6 +29,7 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 req_body = req.get_json()
                 body = PushRequestBody(**req_body)
                 logging.info(f'{aaId} pushed metrics for period : {body.start_time} - {body.end_time}')
+                logging.info(req_body)
             except ValueError as e:
                 logging.error(e)
                 return azure.functions.HttpResponse(format_error("validation_error",str(e)), headers={'content-type':'application/json'})
@@ -45,6 +46,7 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 claim = verify_and_decode_credentials(auth, 'AA')
                 req_body = req.get_json()
                 fiuId = claim['azp']
+                logging.info(req_body)
                 report_query = ReportRequestBody(**req_body)
                 logging.info(f'{fiuId} pushed metrics for period : {report_query.duration} - {report_query.evaluate_at}')
                 report_response = asyncio.run(get_report_async(report_query))
