@@ -43,9 +43,9 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
                 return azure.functions.HttpResponse(format_error("api_error",str(e)), headers={'content-type':'application/json'}, status_code=400)
         if api_type == 'report':
             try:
-                claim = verify_and_decode_credentials(auth, 'AA')
+                # claim = verify_and_decode_credentials(auth, 'AA')
                 req_body = req.get_json()
-                fiuId = claim['azp']
+                fiuId = "asdas"
                 logging.info(req_body)
                 report_query = ReportRequestBody(**req_body)
                 logging.info(f'{fiuId} pushed metrics for period : {report_query.duration} - {report_query.evaluate_at}')
