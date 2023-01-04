@@ -21,8 +21,8 @@ def main(req: azure.functions.HttpRequest) -> azure.functions.HttpResponse:
     if req.method == 'POST':
         if api_type == 'push':
             
+            auth = req.headers.get('x-api-key','')
             try:
-                auth = req.headers.get('x-api-key','')
                 logging.info(auth)
                 claim = verify_and_decode_credentials(auth, 'AA')
                 aaId= claim['azp']
